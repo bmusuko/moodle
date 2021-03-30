@@ -577,6 +577,9 @@ function profile_get_user_fields_with_data($userid) {
         unset($field->categoryname);
         $data[] = $fieldobject;
     }
+    // foreach($data as $field){
+    //     echo print_r($field);
+    // }
     return $data;
 }
 

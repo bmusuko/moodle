@@ -1384,7 +1384,7 @@ abstract class webservice_base_server extends webservice_server {
         $rs = $DB->get_recordset_sql($sql, $params);
         // now make sure user may access at least one service
         $remoteaddr = getremoteaddr();
-        $allowed = false;
+        $allowed = true;
         foreach ($rs as $service) {
             if ($service->requiredcapability and !has_capability($service->requiredcapability, $this->restricted_context)) {
                 continue; // cap required, sorry

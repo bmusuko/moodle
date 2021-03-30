@@ -109,6 +109,13 @@ class user_edit_form extends moodleform {
         $this->set_data($user);
     }
 
+    public function is_gitlab_verified($userId) {
+        global $DB;
+        $sql = "select * from moodle.mdl_user_info_data muid LEFT JOIN moodle.mdl_user_info_field muif ON muid.fieldid = muif.id WHERE muif.shortname = 'isGitlabVerified' AND muid.`data` = '1' AND muid.userid = ".$userId;
+        $res = $DB->get_record_sql($sql);
+        return isset($res->id) ? true : false;
+    }
+
     /**
      * Extend the form definition after the data has been parsed.
      */
@@ -153,11 +160,27 @@ class user_edit_form extends moodleform {
             $customfieldsdata = profile_user_record($userid, false);
             $fields = array_merge($fields, $customfields);
             foreach ($fields as $field) {
+                // mark
                 if ($field === 'description') {
                     // Hard coded hack for description field. See MDL-37704 for details.
                     $formfield = 'description_editor';
                 } else {
                     $formfield = $field;
+                }
+                if ($field === "profile_field_isGitlabVerified"){
+                    $is_verified = $this->is_gitlab_verified($userid);
+//                    $verifyButton = $mform->createElement('text','verifyButton', 'not yet verified','style','color');
+                    if (!$is_verified){
+                        $html_button = '
+                        <div id="fitem_id_profile_field_gitlab" class="form-group row  fitem">
+                            <div class="col-md-3">
+                                <button class="btn btn-secondary ml-0" name="verifyButton" id="id_verifyButton" type="button" onclick="window.open(\'http://localhost:8080/gitlab/auth?userId='.$userid.'\')" style="style">Click Here to Verify</button>
+                            </div>
+                        </div>';
+                        $verifyButton = $mform->createElement('html',$html_button);
+                        $mform->insertElementBefore($verifyButton,'profile_field_isGitlabVerified');
+                    }
+
                 }
                 if (!$mform->elementExists($formfield)) {
                     continue;
