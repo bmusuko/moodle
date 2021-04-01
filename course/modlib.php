@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die;
 use \core_grades\component_gradeitems;
 
 require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->libdir . '/filelib.php');
 
 /**
  * Add course module.
@@ -780,6 +781,13 @@ function get_moduleinfo_data($cm, $course) {
         }
     }
     return array($cm, $context, $module, $data, $cw);
+}
+
+function createGitlab($fromform) {
+    $curl = new curl();
+    $name = str_replace(' ', '-', $fromform->name);
+    $url = 'http://localhost:8080/gitlab/createRepository/'.$fromform->course.'/'.$fromform->coursemodule.'?name='.$name;
+    $curl->post($url);
 }
 
 /**

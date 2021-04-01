@@ -160,15 +160,16 @@ if ($mform->is_cancelled()) {
     } else {
         print_error('invaliddata');
     }
-
     if (isset($fromform->submitbutton)) {
         $url = new moodle_url("/mod/$module->name/view.php", array('id' => $fromform->coursemodule, 'forceview' => 1));
+        createGitlab($fromform);
         if (empty($fromform->showgradingmanagement)) {
             redirect($url);
         } else {
             redirect($fromform->gradingman->get_management_url($url));
         }
     } else {
+        createGitlab($fromform);
         redirect(course_get_url($course, $cw->section, array('sr' => $sectionreturn)));
     }
     exit;
