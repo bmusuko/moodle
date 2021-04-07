@@ -783,11 +783,21 @@ function get_moduleinfo_data($cm, $course) {
     return array($cm, $context, $module, $data, $cw);
 }
 
+function addGitlabInDescription($assignmentId, $gitlabLink) {
+    global $DB;
+    $sql = 'update moodle.mdl_assign SET intro = CONCAT(intro,"<br><br><p> GitLab URL: <a href=\"'.$gitlabLink.'\">'.$gitlabLink.'</a> </p>") where id = '.$assignmentId;
+    $DB->execute($sql);
+}
+
 function createGitlab($fromform) {
     $curl = new curl();
     $name = str_replace(' ', '-', $fromform->name);
     $url = 'http://localhost:8080/gitlab/createRepository/'.$fromform->course.'/'.$fromform->coursemodule.'?name='.$name;
-    $curl->post($url);
+    $response = $curl->post($url);
+    $response_json = json_decode($response);
+    if($response_json->success) {
+        addGitlabInDescription($fromform->instance, $response_json->gitlabUrl);
+    }
 }
 
 /**
