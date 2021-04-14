@@ -71,6 +71,7 @@ define("ASSIGN_MAX_EVENT_LENGTH", "432000");
 
 // Name of file area for intro attachments.
 define('ASSIGN_INTROATTACHMENT_FILEAREA', 'introattachment');
+define('ASSIGN_INTROMETRIC_FILEAREA', 'intrometric');
 
 // Event types.
 define('ASSIGN_EVENT_TYPE_DUE', 'due');
@@ -1529,6 +1530,10 @@ class assign {
         if (isset($formdata->introattachments)) {
             file_save_draft_area_files($formdata->introattachments, $this->get_context()->id,
                                        'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA, 0);
+        }
+        if (isset($formdata->intrometric)) {
+            file_save_draft_area_files($formdata->intrometric, $this->get_context()->id,
+                'mod_assign', ASSIGN_INTROMETRIC_FILEAREA, 0, array('maxfiles' => 1));
         }
     }
 

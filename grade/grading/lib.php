@@ -95,7 +95,7 @@ function get_grading_manager($context_or_areaid = null, $component = null, $area
 class grading_manager {
 
     /** @var stdClass the context */
-    protected $context;
+    public $context;
 
     /** @var string the frankenstyle name of the component */
     protected $component;

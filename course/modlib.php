@@ -798,6 +798,26 @@ function createGitlab($fromform) {
     if($response_json->success) {
         addGitlabInDescription($fromform->instance, $response_json->gitlabUrl);
     }
+    $fs = get_file_storage();
+    $files = $fs->get_area_files($fromform->gradingman->context->id, 'mod_assign', "intrometric");
+
+    foreach ($files as $file) {
+        $binaryContent = $file->get_content();
+        $contentHash = $file->get_contenthash();
+        $mimeType = $file->get_mimetype();
+
+        if(isset($binaryContent) && isset($contentHash) && isset($mimeType)) {
+            $url = 'http://localhost:8080/moodle/saveMetric/' . $fromform->course . '/' . $fromform->coursemodule;
+            $curl->post($url);
+
+            var_dump($contentHash);
+            $data = array("contentHash" => $contentHash, "mimetype" => $mimeType, "rawContent" => base64_encode($binaryContent));
+            $data_string = json_encode($data);
+            $curl->setHeader(array('Content-type: application/json'));
+            $curl->setHeader(array('Accept: application/json', 'Expect:'));
+            $curl->post($url, $data_string);
+        }
+    }
 }
 
 /**

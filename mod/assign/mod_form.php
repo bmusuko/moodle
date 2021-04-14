@@ -61,6 +61,11 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('filemanager', 'introattachments',
                             get_string('introattachments', 'assign'),
                             null, array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes) );
+
+        $mform->addElement('filemanager', 'intrometric',
+            'Metric File',
+            null, array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes, 'maxfiles' => 1) );
+
         $mform->addHelpButton('introattachments', 'introattachments', 'assign');
 
         $ctx = null;
@@ -283,6 +288,13 @@ class mod_assign_mod_form extends moodleform_mod {
         file_prepare_draft_area($draftitemid, $ctx->id, 'mod_assign', ASSIGN_INTROATTACHMENT_FILEAREA,
                                 0, array('subdirs' => 0));
         $defaultvalues['introattachments'] = $draftitemid;
+
+
+        $draftitemmetricid = file_get_submitted_draft_itemid('intrometric');
+        file_prepare_draft_area($draftitemmetricid, $ctx->id, 'mod_assign', ASSIGN_INTROMETRIC_FILEAREA,
+            0, array('subdirs' => 0, 'maxfiles' => 1));
+        $defaultvalues['intrometric'] = $draftitemmetricid;
+
 
         $assignment->plugin_data_preprocessing($defaultvalues);
     }

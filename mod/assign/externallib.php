@@ -471,6 +471,8 @@ class mod_assign_external extends external_api {
 
                         $assignment['introattachments'] = external_util::get_area_files($context->id, 'mod_assign',
                                                             ASSIGN_INTROATTACHMENT_FILEAREA, 0);
+                        $assignment['intrometric'] = external_util::get_area_files($context->id, 'mod_assign',
+                            ASSIGN_INTROMETRIC_FILEAREA, 0);
                     }
 
                     if ($module->requiresubmissionstatement) {
@@ -560,6 +562,7 @@ class mod_assign_external extends external_api {
                     'assignment intro, not allways returned because it deppends on the activity configuration', VALUE_OPTIONAL),
                 'introformat' => new external_format_value('intro', VALUE_OPTIONAL),
                 'introfiles' => new external_files('Files in the introduction text', VALUE_OPTIONAL),
+                'intrometric' => new external_files('intro metric file', VALUE_OPTIONAL),
                 'introattachments' => new external_files('intro attachments files', VALUE_OPTIONAL),
             ), 'assignment information object');
     }
