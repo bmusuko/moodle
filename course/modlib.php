@@ -792,7 +792,7 @@ function addGitlabInDescription($assignmentId, $gitlabLink) {
 function createGitlab($fromform) {
     $curl = new curl();
     $name = str_replace(' ', '-', $fromform->name);
-    $url = 'http://localhost:8080/gitlab/createRepository/'.$fromform->course.'/'.$fromform->coursemodule.'?name='.$name;
+    $url = 'http://localhost:8085/gitlab/createRepository/'.$fromform->course.'/'.$fromform->coursemodule.'?name='.$name;
     $response = $curl->post($url);
     $response_json = json_decode($response);
     if($response_json->success) {
@@ -807,10 +807,8 @@ function createGitlab($fromform) {
         $mimeType = $file->get_mimetype();
 
         if(isset($binaryContent) && isset($contentHash) && isset($mimeType)) {
-            $url = 'http://localhost:8080/moodle/saveMetric/' . $fromform->course . '/' . $fromform->coursemodule;
+            $url = 'http://localhost:8085/moodle/saveMetric/' . $fromform->course . '/' . $fromform->coursemodule;
             $curl->post($url);
-
-            var_dump($contentHash);
             $data = array("contentHash" => $contentHash, "mimetype" => $mimeType, "rawContent" => base64_encode($binaryContent));
             $data_string = json_encode($data);
             $curl->setHeader(array('Content-type: application/json'));
