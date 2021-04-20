@@ -785,8 +785,9 @@ function get_moduleinfo_data($cm, $course) {
 
 function addGitlabInDescription($assignmentId, $gitlabLink) {
     global $DB;
-    $sql = 'update moodle.mdl_assign SET intro = CONCAT(intro,"<br><br><p> GitLab URL: <a href=\"'.$gitlabLink.'\">'.$gitlabLink.'</a> </p>") where id = '.$assignmentId;
-    $DB->execute($sql);
+    $descriptionLink = '<br><p> GitLab URL: <a href="'.$gitlabLink.'" target="_blank">'.$gitlabLink.'</a> </p>';
+    $sql = 'update moodle.mdl_assign SET intro = CONCAT(intro,:description) where id = :id';
+    $DB->execute($sql, array("description" => $descriptionLink, "id" => $assignmentId));
 }
 
 function createGitlab($fromform) {
