@@ -395,6 +395,8 @@ class assign_submission_status implements renderable {
     public $preventsubmissionnotingroup = 0;
     /** @var array usergroups */
     public $usergroups = array();
+    public $gradingmethod = '';
+
 
 
     /**
@@ -460,7 +462,8 @@ class assign_submission_status implements renderable {
                                 $maxattempts,
                                 $gradingstatus,
                                 $preventsubmissionnotingroup,
-                                $usergroups) {
+                                $usergroups,
+                                $gradingmethod) {
         $this->allowsubmissionsfromdate = $allowsubmissionsfromdate;
         $this->alwaysshowdescription = $alwaysshowdescription;
         $this->submission = $submission;
@@ -491,6 +494,7 @@ class assign_submission_status implements renderable {
         $this->gradingstatus = $gradingstatus;
         $this->preventsubmissionnotingroup = $preventsubmissionnotingroup;
         $this->usergroups = $usergroups;
+        $this->gradingmethod = $gradingmethod;
     }
 }
 /**

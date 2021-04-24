@@ -58,6 +58,9 @@ define('ASSIGN_GRADE_NOT_SET', -1);
 define('ASSIGN_GRADING_STATUS_GRADED', 'graded');
 define('ASSIGN_GRADING_STATUS_NOT_GRADED', 'notgraded');
 
+// Grading Method
+define('GRADING_METHOD_FIRST', 'first');
+define('GRADING_METHOD_LAST', 'last');
 // Marking workflow states.
 define('ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED', 'notmarked');
 define('ASSIGN_MARKING_WORKFLOW_STATE_INMARKING', 'inmarking');
@@ -711,6 +714,7 @@ class assign {
         if (isset($formdata->sendstudentnotifications)) {
             $update->sendstudentnotifications = $formdata->sendstudentnotifications;
         }
+        $update->gradingmethod = $formdata->gradingmethod;
         $update->duedate = $formdata->duedate;
         $update->cutoffdate = $formdata->cutoffdate;
         $update->gradingduedate = $formdata->gradingduedate;
@@ -1453,6 +1457,7 @@ class assign {
         if (isset($formdata->sendstudentnotifications)) {
             $update->sendstudentnotifications = $formdata->sendstudentnotifications;
         }
+        $update->gradingmethod = $formdata->gradingmethod;
         $update->duedate = $formdata->duedate;
         $update->cutoffdate = $formdata->cutoffdate;
         $update->gradingduedate = $formdata->gradingduedate;
@@ -4220,7 +4225,8 @@ class assign {
                                                              $instance->maxattempts,
                                                              $this->get_grading_status($userid),
                                                              $instance->preventsubmissionnotingroup,
-                                                             $usergroups);
+                                                             $usergroups,
+                                                             $instance->gradingmethod);
             $o .= $this->get_renderer()->render($submissionstatus);
         }
 
@@ -5280,9 +5286,10 @@ class assign {
                                                           $gradingcontrollerpreview,
                                                           $instance->attemptreopenmethod,
                                                           $instance->maxattempts,
-                                                          $gradingstatus,
+                                                          $gradingstatus, // yang ini
                                                           $instance->preventsubmissionnotingroup,
-                                                          $usergroups);
+                                                          $usergroups,
+                                                          $instance->gradingmethod);
         return $submissionstatus;
     }
 

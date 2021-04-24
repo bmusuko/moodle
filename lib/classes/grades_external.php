@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->libdir/gradelib.php");
 require_once("$CFG->dirroot/grade/querylib.php");
+require_once($CFG->libdir . '/filelib.php');
 
 /**
  * core grades functions
@@ -435,6 +436,7 @@ class core_grades_external extends external_api {
                 'courseid' => new external_value(PARAM_INT, 'id of course'),
                 'component' => new external_value(PARAM_COMPONENT, 'A component, for example mod_forum or mod_quiz'),
                 'activityid' => new external_value(PARAM_INT, 'The activity ID'),
+                'instance' => new external_value(PARAM_INT, 'The instance ID'),
                 'itemnumber' => new external_value(
                     PARAM_INT, 'grade item ID number for modules that have multiple grades. Typically this is 0.'),
                 'grades' => new external_multiple_structure(
@@ -481,15 +483,16 @@ class core_grades_external extends external_api {
      * @param  int $courseid        The course id
      * @param  string $component    Component name
      * @param  int $activityid      The activity id
+     * @param int $intance          The instance id
      * @param  int $itemnumber      The item number
      * @param  array  $grades      Array of grades
      * @param  array  $itemdetails Array of item details
      * @return int                  A status flag
      * @since Moodle 2.7
      */
-    public static function update_grades($source, $courseid, $component, $activityid,
+    public static function update_grades($source, $courseid, $component, $activityid, $instance,// mark
         $itemnumber, $grades = array(), $itemdetails = array()) {
-        global $CFG;
+        global $CFG, $DB;
 
         $params = self::validate_parameters(
             self::update_grades_parameters(),
@@ -498,6 +501,7 @@ class core_grades_external extends external_api {
                 'courseid' => $courseid,
                 'component' => $component,
                 'activityid' => $activityid,
+                'instance'  => $instance,
                 'itemnumber' => $itemnumber,
                 'grades' => $grades,
                 'itemdetails' => $itemdetails
@@ -529,7 +533,24 @@ class core_grades_external extends external_api {
         $gradestructure = array();
         foreach ($grades as $grade) {
             $editinggrades = true;
-            $gradestructure[ $grade['studentid'] ] = array('userid' => $grade['studentid'], 'rawgrade' => $grade['grade']);
+            $gradestructure[ $grade['studentid'] ] = array('userid' => $grade['studentid'], 'rawgrade' => $grade['grade'], 'feedback' => $grade['str_feedback']); //mark
+
+            // insert grade table
+            $studentid = $grade['studentid'];
+
+            $sqlcheck = "SELECT * from moodle.mdl_assign_grades mag WHERE `assignment` = :assignment AND `userid` = :studentid";
+            $res = $DB->get_record_sql($sqlcheck, array('assignment' => $instance, 'studentid' => $studentid));
+            if(isset($res->id)) { // update
+                $sqlupdate = "UPDATE moodle.mdl_assign_grades mag SET mag.grade = :grade, mag.timemodified = :timemodified ,mag.attemptnumber = mag.attemptnumber + 1 WHERE `assignment` = :assignment AND `userid` = :studentid";
+                $DB->execute($sqlupdate, array('grade' => $grade['grade'],'timemodified' => time(),'assignment' => $instance, 'studentid' => $studentid));
+            } else {
+                $sqlinsert = "INSERT INTO moodle.mdl_assign_grades (`assignment`,userid,timecreated,timemodified,grader,grade) VALUES (:assignment,:studentid,:timecreated,:timemodified,2,:grade)";
+                $DB->execute($sqlinsert, array('grade' => $grade['grade'],'assignment' => $instance, 'studentid' => $studentid, 'timemodified' => time(), 'timecreated' => time()));
+            }
+
+            // insert last modified
+            $sqlupdate = "UPDATE moodle.mdl_assign_submission mas SET mas.timemodified = :timemodified, mas.status = :status WHERE `assignment` = :assignment AND `userid` = :studentid";
+            $DB->execute($sqlupdate, array('status' => 'submitted','timemodified' => time(),'assignment' => $instance, 'studentid' => $studentid));
         }
         if (!empty($params['itemdetails'])) {
             if (isset($params['itemdetails']['hidden'])) {

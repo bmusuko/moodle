@@ -383,6 +383,7 @@ class mod_assign_external extends external_api {
                      'm.markingallocation, ' .
                      'm.requiresubmissionstatement, '.
                      'm.preventsubmissionnotingroup, '.
+                     'm.gradingmethod, '.
                      'm.intro, '.
                      'm.introformat';
         $coursearray = array();
@@ -438,6 +439,7 @@ class mod_assign_external extends external_api {
                         'sendnotifications' => $module->sendnotifications,
                         'sendlatenotifications' => $module->sendlatenotifications,
                         'sendstudentnotifications' => $module->sendstudentnotifications,
+                        'gradingmethod' => $module->gradingmethod,
                         'duedate' => $assign->get_instance()->duedate,
                         'allowsubmissionsfromdate' => $assign->get_instance()->allowsubmissionsfromdate,
                         'grade' => $module->grade,
@@ -536,6 +538,7 @@ class mod_assign_external extends external_api {
                 'sendnotifications' => new external_value(PARAM_INT, 'send notifications'),
                 'sendlatenotifications' => new external_value(PARAM_INT, 'send notifications'),
                 'sendstudentnotifications' => new external_value(PARAM_INT, 'send student notifications (default)'),
+                'gradingmethod' => new external_value(PARAM_RAW, 'Grading Method'),
                 'duedate' => new external_value(PARAM_INT, 'assignment due date'),
                 'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'allow submissions from date'),
                 'grade' => new external_value(PARAM_INT, 'grade type'),

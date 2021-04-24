@@ -790,15 +790,33 @@ function addGitlabInDescription($assignmentId, $gitlabLink) {
     $DB->execute($sql, array("description" => $descriptionLink, "id" => $assignmentId));
 }
 
+function modifyGradingMethod($assignmentId, $gradingMethod) {
+    global $DB;
+    $sql = 'update moodle.mdl_assign SET gradingmethod = :gradingmethod where id = :id';
+    $DB->execute($sql, array("gradingmethod" => $gradingMethod, 'id' => $assignmentId));
+}
+
 function createGitlab($fromform) {
     $curl = new curl();
     $name = str_replace(' ', '-', $fromform->name);
-    $url = 'http://localhost:8085/gitlab/createRepository/'.$fromform->course.'/'.$fromform->coursemodule.'?name='.$name;
-    $response = $curl->post($url);
+    $url = 'http://localhost:8085/gitlab/createRepository/';
+    $data_create = array(
+        "courseId" => $fromform->course,
+        "activityId" => $fromform->coursemodule,
+        'name'=> $name,
+        'instance' => $fromform->instance,
+        'gradingMethod' => $fromform->gradingmethod,
+        'dueDate' => $fromform->duedate
+    );
+    $data_create_string = json_encode($data_create);
+    $curl->setHeader(array('Content-type: application/json'));
+    $curl->setHeader(array('Accept: application/json', 'Expect:'));
+    $response = $curl->post($url,$data_create_string);
     $response_json = json_decode($response);
     if($response_json->success) {
         addGitlabInDescription($fromform->instance, $response_json->gitlabUrl);
     }
+    modifyGradingMethod($fromform->instance, $fromform->gradingmethod);
     $fs = get_file_storage();
     $files = $fs->get_area_files($fromform->gradingman->context->id, 'mod_assign', "intrometric");
 

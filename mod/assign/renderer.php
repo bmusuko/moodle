@@ -421,9 +421,9 @@ class mod_assign_renderer extends plugin_renderer_base {
             $this->add_table_row_tuple($t, $cell1content, $cell2content);
 
             // Grade date.
-            $cell1content = get_string('gradedon', 'assign');
-            $cell2content = userdate($status->gradeddate);
-            $this->add_table_row_tuple($t, $cell1content, $cell2content);
+//            $cell1content = get_string('gradedon', 'assign');
+//            $cell2content = userdate($status->gradeddate);
+//            $this->add_table_row_tuple($t, $cell1content, $cell2content);
         }
 
         if ($status->grader) {
@@ -496,7 +496,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                 $o .= $this->output->container($statusstr, 'submissionstatus' . $status->submission->status);
             } else {
                 if (!$status->submissionsenabled) {
-                    $o .= $this->output->container(get_string('noonlinesubmissions', 'assign'), 'submissionstatus');
+                    $o .= $this->output->container(get_string('noonlinesubmissions', 'assign'), 'submissionstatus'); // bukan
                 } else {
                     $o .= $this->output->container(get_string('noattempt', 'assign'), 'submissionstatus');
                 }
@@ -533,7 +533,7 @@ class mod_assign_renderer extends plugin_renderer_base {
                 $o .= $this->output->container($submissionsummary, 'submissionstatus' . $status->teamsubmission->status);
             } else {
                 if (!$status->submissionsenabled) {
-                    $o .= $this->output->container(get_string('noonlinesubmissions', 'assign'), 'submissionstatus');
+                    $o .= $this->output->container(get_string('noonlinesubmissions', 'assign'), 'submissionstatus'); // bukan
                 } else {
                     $o .= $this->output->container(get_string('nosubmission', 'assign'), 'submissionstatus');
                 }
@@ -651,7 +651,7 @@ class mod_assign_renderer extends plugin_renderer_base {
      * @param assign_submission_status $status
      * @return string
      */
-    public function render_assign_submission_status(assign_submission_status $status) {
+    public function render_assign_submission_status(assign_submission_status $status) { // fungsi ini
         $o = '';
         $o .= $this->output->container_start('submissionstatustable');
         $o .= $this->output->heading(get_string('submissionstatusheading', 'assign'), 3);
@@ -852,6 +852,16 @@ class mod_assign_renderer extends plugin_renderer_base {
             }
             $this->add_table_row_tuple($t, $cell1content, $cell2content, [], $cell2attributes);
         }
+
+        $cell1content = 'Grading Method';
+        if ($status->gradingmethod == GRADING_METHOD_FIRST){
+            $cell2content = 'First Submission';
+//            $cell2content = get_string('gradingmethodfirst', 'assign');
+        } else {
+            $cell2content = 'Last Submission';
+//            $cell2content = get_string('gradingmethodlast', 'assign');
+        }
+        $this->add_table_row_tuple($t, $cell1content,$cell2content, [], []);
 
         // Show graders whether this submission is editable by students.
         if ($status->view == assign_submission_status::GRADER_VIEW) {

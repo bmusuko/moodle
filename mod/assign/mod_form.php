@@ -62,11 +62,18 @@ class mod_assign_mod_form extends moodleform_mod {
                             get_string('introattachments', 'assign'),
                             null, array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes) );
 
+
+        $mform->addHelpButton('introattachments', 'introattachments', 'assign');
         $mform->addElement('filemanager', 'intrometric',
             'Metric File',
             null, array('subdirs' => 0, 'maxbytes' => $COURSE->maxbytes, 'maxfiles' => 1) );
 
-        $mform->addHelpButton('introattachments', 'introattachments', 'assign');
+        $gradingmethods = array(
+            GRADING_METHOD_FIRST => 'First Submission',
+            GRADING_METHOD_LAST => 'Last Submission'
+        );
+
+        $mform->addElement('select', 'gradingmethod', 'Grading Method', $gradingmethods);
 
         $ctx = null;
         if ($this->current && $this->current->coursemodule) {
