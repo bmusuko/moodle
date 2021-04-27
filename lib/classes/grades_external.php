@@ -541,7 +541,7 @@ class core_grades_external extends external_api {
             $sqlcheck = "SELECT * from moodle.mdl_assign_grades mag WHERE `assignment` = :assignment AND `userid` = :studentid";
             $res = $DB->get_record_sql($sqlcheck, array('assignment' => $instance, 'studentid' => $studentid));
             if(isset($res->id)) { // update
-                $sqlupdate = "UPDATE moodle.mdl_assign_grades mag SET mag.grade = :grade, mag.timemodified = :timemodified ,mag.attemptnumber = mag.attemptnumber + 1 WHERE `assignment` = :assignment AND `userid` = :studentid";
+                $sqlupdate = "UPDATE moodle.mdl_assign_grades mag SET mag.grade = :grade, mag.timemodified = :timemodified  WHERE `assignment` = :assignment AND `userid` = :studentid";
                 $DB->execute($sqlupdate, array('grade' => $grade['grade'],'timemodified' => time(),'assignment' => $instance, 'studentid' => $studentid));
             } else {
                 $sqlinsert = "INSERT INTO moodle.mdl_assign_grades (`assignment`,userid,timecreated,timemodified,grader,grade) VALUES (:assignment,:studentid,:timecreated,:timemodified,2,:grade)";
