@@ -783,17 +783,23 @@ function get_moduleinfo_data($cm, $course) {
     return array($cm, $context, $module, $data, $cw);
 }
 
-function addGitlabInDescription($assignmentId, $gitlabLink) {
-    global $DB;
-    $descriptionLink = '<br><p> GitLab URL: <a href="'.$gitlabLink.'" target="_blank">'.$gitlabLink.'</a> </p>';
-    $sql = 'update moodle.mdl_assign SET intro = CONCAT(intro,:description) where id = :id';
-    $DB->execute($sql, array("description" => $descriptionLink, "id" => $assignmentId));
-}
+//function addGitlabInDescription($assignmentId, $gitlabLink) {
+//    global $DB;
+//    $descriptionLink = '<br><p> GitLab URL: <a href="'.$gitlabLink.'" target="_blank">'.$gitlabLink.'</a> </p>';
+//    $sql = 'update moodle.mdl_assign SET intro = CONCAT(intro,:description) where id = :id';
+//    $DB->execute($sql, array("description" => $descriptionLink, "id" => $assignmentId));
+//}
 
 function modifyGradingMethod($assignmentId, $gradingMethod) {
     global $DB;
     $sql = 'update moodle.mdl_assign SET gradingmethod = :gradingmethod where id = :id';
     $DB->execute($sql, array("gradingmethod" => $gradingMethod, 'id' => $assignmentId));
+}
+
+function modifyGitlabLink($assignmentId, $gitlabLink) {
+    global $DB;
+    $sql = 'update moodle.mdl_assign SET gitlabLink = :gitlablink where id = :id';
+    $DB->execute($sql, array("gitlablink" => $gitlabLink, 'id' => $assignmentId));
 }
 
 function createGitlab($fromform) {
@@ -814,7 +820,7 @@ function createGitlab($fromform) {
     $response = $curl->post($url,$data_create_string);
     $response_json = json_decode($response);
     if($response_json->success) {
-        addGitlabInDescription($fromform->instance, $response_json->gitlabUrl);
+        modifyGitlabLink($fromform->instance, $response_json->gitlabUrl);
     }
     modifyGradingMethod($fromform->instance, $fromform->gradingmethod);
     $fs = get_file_storage();

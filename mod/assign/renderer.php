@@ -277,16 +277,32 @@ class mod_assign_renderer extends plugin_renderer_base {
      */
     public function render_assign_grading_summary(assign_grading_summary $summary) {
         // Create a table for the data.
+        global $DB;
         $o = '';
         $o .= $this->output->container_start('gradingsummary');
         $o .= $this->output->heading(get_string('gradingsummary', 'assign'), 3);
         $o .= $this->output->box_start('boxaligncenter gradingsummarytable');
         $t = new html_table();
 
+        // gitlab Link
+        $sql = "SELECT ma.gradingMethod, ma.gitlabLink from mdl_course_modules mcm JOIN mdl_assign ma on mcm.`instance` = ma.id where mcm.id = :id ";
+        $res =  $DB->get_record_sql($sql, array('id' => $summary->coursemoduleid));
+        $gitlabLink = $res->gitlablink;
+        $this->add_table_row_tuple($t, 'Gitlab Link','<a href="'.$gitlabLink.'" target="_blank">'.$gitlabLink.'</a> </p>', [], []);
+
+        $cell1content = 'Grading Method';
+        if ($res->gradingmethod == GRADING_METHOD_FIRST){
+            $cell2content = 'First Submission';
+        } else {
+            $cell2content = 'Last Submission';
+        }
+        $this->add_table_row_tuple($t, $cell1content,$cell2content, [], []);
+
         // Visibility Status.
         $cell1content = get_string('hiddenfromstudents');
         $cell2content = (!$summary->isvisible) ? get_string('yes') : get_string('no');
         $this->add_table_row_tuple($t, $cell1content, $cell2content);
+
 
         // Status.
         if ($summary->teamsubmission) {
@@ -652,6 +668,8 @@ class mod_assign_renderer extends plugin_renderer_base {
      * @return string
      */
     public function render_assign_submission_status(assign_submission_status $status) { // fungsi ini
+        global $DB;
+
         $o = '';
         $o .= $this->output->container_start('submissionstatustable');
         $o .= $this->output->heading(get_string('submissionstatusheading', 'assign'), 3);
@@ -672,6 +690,11 @@ class mod_assign_renderer extends plugin_renderer_base {
         $o .= $this->output->box_start('boxaligncenter submissionsummarytable');
 
         $t = new html_table();
+
+        $sql = "SELECT ma.gitlabLink from mdl_course_modules mcm JOIN mdl_assign ma on mcm.`instance` = ma.id where mcm.id = :id ";
+        $res =  $DB->get_record_sql($sql, array('id' => $status->coursemoduleid));
+        $gitlabLink = $res->gitlablink;
+        $this->add_table_row_tuple($t, 'Gitlab Link','<a href="'.$gitlabLink.'" target="_blank">'.$gitlabLink.'</a> </p>', [], []);
 
         $warningmsg = '';
         if ($status->teamsubmissionenabled) {
@@ -856,10 +879,8 @@ class mod_assign_renderer extends plugin_renderer_base {
         $cell1content = 'Grading Method';
         if ($status->gradingmethod == GRADING_METHOD_FIRST){
             $cell2content = 'First Submission';
-//            $cell2content = get_string('gradingmethodfirst', 'assign');
         } else {
             $cell2content = 'Last Submission';
-//            $cell2content = get_string('gradingmethodlast', 'assign');
         }
         $this->add_table_row_tuple($t, $cell1content,$cell2content, [], []);
 
