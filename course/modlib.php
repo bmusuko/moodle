@@ -803,9 +803,10 @@ function modifyGitlabLink($assignmentId, $gitlabLink) {
 }
 
 function createGitlab($fromform) {
+    global $CFG;
     $curl = new curl();
     $name = str_replace(' ', '-', $fromform->name);
-    $url = 'http://localhost:8085/gitlab/createRepository/';
+    $url = $CFG->bridgeServiceURL.'/gitlab/createRepository/';
     $data_create = array(
         "courseId" => $fromform->course,
         "activityId" => $fromform->coursemodule,
@@ -832,7 +833,7 @@ function createGitlab($fromform) {
         $mimeType = $file->get_mimetype();
 
         if(isset($binaryContent) && isset($contentHash) && isset($mimeType)) {
-            $url = 'http://localhost:8085/moodle/saveMetric/' . $fromform->course . '/' . $fromform->coursemodule;
+            $url = $CFG->bridgeServiceURL.'/moodle/saveMetric/' . $fromform->course . '/' . $fromform->coursemodule;
             $curl->post($url);
             $data = array("contentHash" => $contentHash, "mimetype" => $mimeType, "rawContent" => base64_encode($binaryContent));
             $data_string = json_encode($data);

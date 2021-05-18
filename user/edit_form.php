@@ -174,7 +174,7 @@ class user_edit_form extends moodleform {
                         $html_button = '
                         <div id="fitem_id_profile_field_gitlab" class="form-group row  fitem">
                             <div class="col-md-3">
-                                <button class="btn btn-secondary ml-0" name="verifyButton" id="id_verifyButton" type="button" onclick="window.open(\'http://localhost:8085/gitlab/auth?userId='.$userid.'\')" style="style">Click Here to Verify</button>
+                                <button class="btn btn-secondary ml-0" name="verifyButton" id="id_verifyButton" type="button" onclick="window.open(\''.$CFG->bridgeServiceURL.'/gitlab/auth?userId='.$userid.'\')" style="style">Click Here to Verify</button>
                             </div>
                         </div>';
                         $verifyButton = $mform->createElement('html',$html_button);
