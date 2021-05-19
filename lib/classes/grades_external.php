@@ -538,18 +538,18 @@ class core_grades_external extends external_api {
             // insert grade table
             $studentid = $grade['studentid'];
 
-            $sqlcheck = "SELECT * from moodle.mdl_assign_grades mag WHERE `assignment` = :assignment AND `userid` = :studentid";
+            $sqlcheck = "SELECT * from {assign_grades} mag WHERE `assignment` = :assignment AND `userid` = :studentid";
             $res = $DB->get_record_sql($sqlcheck, array('assignment' => $instance, 'studentid' => $studentid));
             if(isset($res->id)) { // update
-                $sqlupdate = "UPDATE moodle.mdl_assign_grades mag SET mag.grade = :grade, mag.timemodified = :timemodified  WHERE `assignment` = :assignment AND `userid` = :studentid";
+                $sqlupdate = "UPDATE {assign_grades} mag SET mag.grade = :grade, mag.timemodified = :timemodified  WHERE `assignment` = :assignment AND `userid` = :studentid";
                 $DB->execute($sqlupdate, array('grade' => $grade['grade'],'timemodified' => time(),'assignment' => $instance, 'studentid' => $studentid));
             } else {
-                $sqlinsert = "INSERT INTO moodle.mdl_assign_grades (`assignment`,userid,timecreated,timemodified,grader,grade) VALUES (:assignment,:studentid,:timecreated,:timemodified,2,:grade)";
+                $sqlinsert = "INSERT INTO {assign_grades} (`assignment`,userid,timecreated,timemodified,grader,grade) VALUES (:assignment,:studentid,:timecreated,:timemodified,2,:grade)";
                 $DB->execute($sqlinsert, array('grade' => $grade['grade'],'assignment' => $instance, 'studentid' => $studentid, 'timemodified' => time(), 'timecreated' => time()));
             }
 
             // insert last modified
-            $sqlupdate = "UPDATE moodle.mdl_assign_submission mas SET mas.timemodified = :timemodified, mas.status = :status WHERE `assignment` = :assignment AND `userid` = :studentid";
+            $sqlupdate = "UPDATE {assign_submission} mas SET mas.timemodified = :timemodified, mas.status = :status WHERE `assignment` = :assignment AND `userid` = :studentid";
             $DB->execute($sqlupdate, array('status' => 'submitted','timemodified' => time(),'assignment' => $instance, 'studentid' => $studentid));
         }
         if (!empty($params['itemdetails'])) {

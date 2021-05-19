@@ -111,7 +111,7 @@ class user_edit_form extends moodleform {
 
     public function is_gitlab_verified($userId) {
         global $DB;
-        $sql = "select * from moodle.mdl_user_info_data muid LEFT JOIN moodle.mdl_user_info_field muif ON muid.fieldid = muif.id WHERE muif.shortname = 'isGitlabVerified' AND muid.`data` = '1' AND muid.userid = :userid";
+        $sql = "select * from {user_info_data} muid LEFT JOIN {user_info_field} muif ON muid.fieldid = muif.id WHERE muif.shortname = 'isGitlabVerified' AND muid.`data` = '1' AND muid.userid = :userid";
         $res = $DB->get_record_sql($sql, array('userid' => $userId));
         return isset($res->id) ? true : false;
     }

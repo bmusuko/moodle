@@ -285,7 +285,7 @@ class mod_assign_renderer extends plugin_renderer_base {
         $t = new html_table();
 
         // gitlab Link
-        $sql = "SELECT ma.gradingMethod, ma.gitlabLink from mdl_course_modules mcm JOIN mdl_assign ma on mcm.`instance` = ma.id where mcm.id = :id ";
+        $sql = "SELECT ma.gradingMethod, ma.gitlabLink from {course_modules} mcm JOIN {assign} ma on mcm.`instance` = ma.id where mcm.id = :id ";
         $res =  $DB->get_record_sql($sql, array('id' => $summary->coursemoduleid));
         $gitlabLink = $res->gitlablink;
         $this->add_table_row_tuple($t, 'Gitlab Link','<a href="'.$gitlabLink.'" target="_blank">'.$gitlabLink.'</a> </p>', [], []);
@@ -691,7 +691,7 @@ class mod_assign_renderer extends plugin_renderer_base {
 
         $t = new html_table();
 
-        $sql = "SELECT ma.gitlabLink from mdl_course_modules mcm JOIN mdl_assign ma on mcm.`instance` = ma.id where mcm.id = :id ";
+        $sql = "SELECT ma.gitlabLink from {course_modules} mcm JOIN {assign} ma on mcm.`instance` = ma.id where mcm.id = :id ";
         $res =  $DB->get_record_sql($sql, array('id' => $status->coursemoduleid));
         $gitlabLink = $res->gitlablink;
         $this->add_table_row_tuple($t, 'Gitlab Link','<a href="'.$gitlabLink.'" target="_blank">'.$gitlabLink.'</a> </p>', [], []);

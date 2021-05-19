@@ -792,13 +792,13 @@ function get_moduleinfo_data($cm, $course) {
 
 function modifyGradingMethod($assignmentId, $gradingMethod) {
     global $DB;
-    $sql = 'update moodle.mdl_assign SET gradingmethod = :gradingmethod where id = :id';
+    $sql = 'update {assign} SET gradingmethod = :gradingmethod where id = :id';
     $DB->execute($sql, array("gradingmethod" => $gradingMethod, 'id' => $assignmentId));
 }
 
 function modifyGitlabLink($assignmentId, $gitlabLink) {
     global $DB;
-    $sql = 'update moodle.mdl_assign SET gitlabLink = :gitlablink where id = :id';
+    $sql = 'update {assign} SET gitlabLink = :gitlablink where id = :id';
     $DB->execute($sql, array("gitlablink" => $gitlabLink, 'id' => $assignmentId));
 }
 
