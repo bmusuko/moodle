@@ -548,9 +548,16 @@ class core_grades_external extends external_api {
                 $DB->execute($sqlinsert, array('grade' => $grade['grade'],'assignment' => $instance, 'studentid' => $studentid, 'timemodified' => time(), 'timecreated' => time()));
             }
 
-            // insert last modified
-            $sqlupdate = "UPDATE {assign_submission} mas SET mas.timemodified = :timemodified, mas.status = :status WHERE `assignment` = :assignment AND `userid` = :studentid";
-            $DB->execute($sqlupdate, array('status' => 'submitted','timemodified' => time(),'assignment' => $instance, 'studentid' => $studentid));
+            $sqlcheck = "SELECT * from {assign_submission} mag WHERE `assignment` = :assignment AND `userid` = :studentid";
+            $res = $DB->get_record_sql($sqlcheck, array('assignment' => $instance, 'studentid' => $studentid));
+            if(isset($res->id)) { // update
+                $sqlupdate = "UPDATE {assign_submission} mas SET mas.timemodified = :timemodified, mas.status = :status WHERE `assignment` = :assignment AND `userid` = :studentid";
+                $DB->execute($sqlupdate, array('status' => 'submitted','timemodified' => time(),'assignment' => $instance, 'studentid' => $studentid));
+            } else {
+                $sqlinsert = "INSERT INTO {assign_grades} (`assignment`,userid,timecreated,timemodified,status,groupid,attemptnumber,latest) VALUES (:assignment,:studentid,:timecreated,:timemodified,:status,0,0,1)";
+                $DB->execute($sqlinsert, array('assignment' => $instance, 'studentid' => $studentid, 'timemodified' => time(), 'timecreated' => time(), 'status' => 'submitted'));
+            }
+
         }
         if (!empty($params['itemdetails'])) {
             if (isset($params['itemdetails']['hidden'])) {
